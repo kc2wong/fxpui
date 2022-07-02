@@ -8,16 +8,6 @@ class CurrencySearchState {
   final List<String> errorParams;
   final int lastActionTime;
 
-  // CurrencySearchState({
-  //   this.loading = false,
-  //   this.currencyList,
-  //   this.errorCode,
-  //   this.errorParams = const [],
-  //   required this.lastActionTime,
-  // }) {
-  //   precisionMap = currencyList == null ? {} : {for (var e in currencyList ?? <Currency>[]) e.isoCcy: e.precision};
-  // }
-
   CurrencySearchState.initial()
       : loading = false,
         currencyList = null,
@@ -51,4 +41,9 @@ class CurrencySearchState {
   )   : loading = false,
         currencyList = currencySearchState.currencyList,
         precisionMap = currencySearchState.precisionMap;
+
+  bool dataFetched() {
+    return currencyList != null || errorCode != null;
+  }
+
 }

@@ -19,13 +19,15 @@ class SiteSearchBloc extends Bloc<BaseSiteEvent, SiteSearchState> {
     on<EnableSelectSiteEvent>(_handleEnableSelectSiteEvent);
   }
 
-  bool withData() {
-    return state.lastActionTime > 0 && state.siteList != null;
+  void resetState() {
+    add(
+      SiteSearchEvent(true),
+    );
   }
 
   void listSite() {
     add(
-      SiteSearchEvent(),
+      SiteSearchEvent(false),
     );
   }
 
@@ -50,32 +52,36 @@ class SiteSearchBloc extends Bloc<BaseSiteEvent, SiteSearchState> {
   Future<void> _handleSiteSearchEvent(SiteSearchEvent event, Emitter emit) async {
     logger.i('event = $event');
 
-    try {
-      emit(SiteSearchState.startSearch(state));
-      final searchResult = await _siteService.listSite();
-      searchResult.sort((c1, c2) => c1.siteCode.compareTo(c2.siteCode));
+    if (event.reset) {
+      emit(SiteSearchState.initial());
+    } else {
+      try {
+        emit(SiteSearchState.startSearch(state));
+        final searchResult = await _siteService.listSite();
+        searchResult.sort((c1, c2) => c1.siteCode.compareTo(c2.siteCode));
 
-      await Future.delayed(const Duration(seconds: 1));
+        await Future.delayed(const Duration(seconds: 1));
 
-      emit(SiteSearchState.finishSearch(
-        state,
-        searchResult,
-        DateTime.now().microsecondsSinceEpoch,
-      ));
-    } on ApplicationException catch (ae) {
-      emit(SiteSearchState.failSearch(
-        state,
-        ae.errorCode,
-        ae.errorParams,
-        DateTime.now().microsecondsSinceEpoch,
-      ));
-    } catch (error) {
-      emit(SiteSearchState.failSearch(
-        state,
-        genericErrorCode,
-        [],
-        DateTime.now().microsecondsSinceEpoch,
-      ));
+        emit(SiteSearchState.finishSearch(
+          state,
+          searchResult,
+          DateTime.now().microsecondsSinceEpoch,
+        ));
+      } on ApplicationException catch (ae) {
+        emit(SiteSearchState.failSearch(
+          state,
+          ae.errorCode,
+          ae.errorParams,
+          DateTime.now().microsecondsSinceEpoch,
+        ));
+      } catch (error) {
+        emit(SiteSearchState.failSearch(
+          state,
+          genericErrorCode,
+          [],
+          DateTime.now().microsecondsSinceEpoch,
+        ));
+      }
     }
   }
 

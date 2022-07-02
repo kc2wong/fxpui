@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 import 'base_widget.dart';
-import '../util/logger.dart';
 
 class InputNumber extends StatefulWidget with BaseWidget, LabelledWidget {
   static const separator = ',';
@@ -42,7 +41,6 @@ class InputNumber extends StatefulWidget with BaseWidget, LabelledWidget {
     this.enabled = true,
     this.onChanged,
   }) : super(key: key) {
-    logger.d('Create InputNumber $label, initialValue = $initialValue content = ${controller.text}, numberOfDecimal = $numberOfDecimal');
     if (initialValue != null) {
       final integerPart = thousandSeparator ? '#,###' : '#';
       final decimalPart = numberOfDecimal > 0 ? '.' + '0' * numberOfDecimal : '';

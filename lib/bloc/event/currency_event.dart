@@ -1,6 +1,4 @@
 class CurrencySearchEvent {
-  String? siteCode;
-
-  CurrencySearchEvent(this.siteCode);
-
+  bool reset;
+  CurrencySearchEvent(this.reset);
 }

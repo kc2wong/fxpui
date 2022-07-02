@@ -9,9 +9,7 @@ import '../util/logger.dart';
 
 class CurrencySearchService extends BaseHttpService {
   Future<List<Currency>> listCurrency() async {
-
-    const url =
-        '${BaseHttpService.baseUrl}/v1/currencies';
+    const url = '${BaseHttpService.baseUrl}/v1/currencies';
     final response = await http.get(
         Uri.parse(url),
         headers: {'Content-Type': 'application/json'},

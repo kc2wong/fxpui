@@ -4,10 +4,8 @@ import '../../model/payment.dart';
 enum TransactionStatus {
   noTransaction,
   edit,
-  // initialize,
   startCreate,
   finishCreate,
-  // edit,
   startUpdate,
   finishUpdate,
   startGetOne,

@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import 'common.dart';
 import '../model/exception.dart';
 import '../model/client.dart';
-import '../service/common.dart';
 import '../util/logger.dart';
 
 class FxAccountSearchService extends BaseHttpService {

@@ -23,14 +23,14 @@ import '../util/logger.dart';
 
 import 'payment/payment_view_controller.dart' as p;
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatefulWidget with BaseWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin, BaseWidget {
+class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late TextEditingController _siteController;
 
@@ -55,12 +55,12 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     });
 
     final siteSearchBloc = BlocProvider.of<SiteSearchBloc>(context);
-    if (!siteSearchBloc.withData()) {
+    if (!siteSearchBloc.state.dataFetched()) {
       siteSearchBloc.listSite();
     }
 
     final currencySearchBloc = BlocProvider.of<CurrencySearchBloc>(context);
-    if (!currencySearchBloc.withData()) {
+    if (!currencySearchBloc.state.dataFetched()) {
       currencySearchBloc.listCurrency();
     }
   }
@@ -167,11 +167,12 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                             padding: const EdgeInsets.only(
                                               right: 25,
                                             ),
-                                            child: Text(
+                                            child: widget.addTooltip(
+                                              themeData,
                                               authentication.user.name,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: themeData.disabledColor,
+                                              Text(
+                                                authentication.user.userid,
+                                                style: widget.defaultTextStyle(),
                                               ),
                                             ),
                                           )
@@ -256,7 +257,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         alignment: Alignment.center,
         child: Text(
           title,
-          style: defaultTextStyle(
+          style: widget.defaultTextStyle(
             color: color,
             fontWeight: FontWeight.bold,
           ),

@@ -77,8 +77,8 @@ class _PaymentListingPageState extends State<PaymentListingPage> with BaseWidget
 
     final EnrichmentRequestSearchBloc enrichmentRequestSearchBloc = BlocProvider.of<EnrichmentRequestSearchBloc>(context);
 
-    if (!enrichmentRequestSearchBloc.state.withData()) {
-      enrichmentRequestSearchBloc.resetState();
+    if (!enrichmentRequestSearchBloc.state.dataFetched()) {
+      enrichmentRequestSearchBloc.resetState(siteCode: context.read<SiteSearchBloc>().state.selectedSite?.siteCode);
     }
   }
 
@@ -105,8 +105,6 @@ class _PaymentListingPageState extends State<PaymentListingPage> with BaseWidget
     final i18n = Language.of(context);
     final EnrichmentRequestSearchBloc paymentSearchBloc = BlocProvider.of<EnrichmentRequestSearchBloc>(context);
 
-    logger.d('_PaymentListingPageState.build() triggered');
-
     final systemBloc = BlocProvider.of<SystemBloc>(context);
     final EnrichmentRequestSearchBloc enrichmentRequestSearchBloc = BlocProvider.of<EnrichmentRequestSearchBloc>(context);
 
@@ -115,21 +113,29 @@ class _PaymentListingPageState extends State<PaymentListingPage> with BaseWidget
         BlocListener<EnrichmentRequestSearchBloc, EnrichmentRequestSearchState>(
           // trigger a search if there is no data.  Show / hide loading indicator when search starts / finishes
           listenWhen: (previous, current) {
-            return !current.withData() || previous.loading != current.loading || current.lastActionTime > previous.lastActionTime;
+            return !current.dataFetched() || previous.loading != current.loading || current.lastActionTime > previous.lastActionTime;
           },
           listener: (_, state) {
             if (state.loading) {
               systemBloc.startLoading();
-            } else {
-              if (state.withData()) {
+            }
+            else {
+              if (state.dataFetched()) {
                 systemBloc.stopLoading();
-                if (state.refreshSuccessMessage != null) {
+                if (state.errorCode != null) {
+                  systemBloc.showToast(
+                    i18n.getErrorMessage(state.errorCode!, state.errorParams ?? []),
+                    ToastType.error,
+                  );
+                }
+                else if (state.refreshSuccessMessage != null) {
                   systemBloc.showToast(
                     state.refreshSuccessMessage!,
                     ToastType.success,
                   );
                 }
-              } else {
+              }
+              else if (state.siteCode != null){
                 enrichmentRequestSearchBloc.refreshData(forceRefresh: false);
               }
             }
@@ -139,7 +145,7 @@ class _PaymentListingPageState extends State<PaymentListingPage> with BaseWidget
           // When selected site is changed, search data again
           listenWhen: (previous, current) => previous.selectedSite?.siteCode != current.selectedSite?.siteCode,
           listener: (_, state) {
-            enrichmentRequestSearchBloc.resetState();
+            enrichmentRequestSearchBloc.resetState(siteCode: state.selectedSite?.siteCode);
           },
         ),
       ],
@@ -155,9 +161,6 @@ class _PaymentListingPageState extends State<PaymentListingPage> with BaseWidget
           ),
           Expanded(
             child: _searchResultPanel(i18n),
-            // child: Container(
-            //   child: _searchResultPanel(i18n),
-            // ),
           ),
         ],
       ),
@@ -439,9 +442,9 @@ class _PaymentListingPageState extends State<PaymentListingPage> with BaseWidget
 
   Widget _initiatedByCriteria(Language i18n, EnrichmentRequestSearchState state) {
     return InputText(
-      label: i18n.paymentPage.account,
-      initialValue: state.account,
-      controller: _accountController,
+      label: i18n.paymentPage.initiatedBy,
+      initialValue: state.initiatedBy,
+      controller: _initiatedByController,
     );
   }
 
@@ -553,7 +556,7 @@ class _PaymentListingPageState extends State<PaymentListingPage> with BaseWidget
   }
 
   Widget _searchResetButton(Language i18n, EnrichmentRequestSearchState state) {
-    final siteSearchBloc = context.read<SiteSearchBloc>();
+    final siteCode = context.read<SiteSearchBloc>().state.selectedSite!.siteCode;
     final enrichmentRequestSearchBloc = BlocProvider.of<EnrichmentRequestSearchBloc>(context);
 
     return Row(
@@ -563,14 +566,14 @@ class _PaymentListingPageState extends State<PaymentListingPage> with BaseWidget
           padding: const EdgeInsets.only(right: 8.0),
           child: Button(
             buttonType: ButtonType.secondary,
-            onTap: () => enrichmentRequestSearchBloc.resetState(),
+            onTap: () => enrichmentRequestSearchBloc.resetState(siteCode: siteCode),
             text: i18n.reset,
           ),
         ),
         Button(
           buttonType: ButtonType.primary,
           onTap: () {
-            _search(i18n, siteSearchBloc.state.selectedSite!.siteCode, enrichmentRequestSearchBloc);
+            _search(i18n, siteCode, enrichmentRequestSearchBloc);
           },
           text: i18n.submit,
         )

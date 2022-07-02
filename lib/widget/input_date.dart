@@ -80,8 +80,7 @@ class _InputDateState extends State<InputDate> {
     final themeData = Theme.of(context);
 
     final calendarIcon = widget.enabled
-        ? null
-        : InkWell(
+        ? InkWell(
             onTap: () async {
               DateTime? initialDate;
               try {
@@ -105,7 +104,8 @@ class _InputDateState extends State<InputDate> {
               ),
             ),
             focusNode: _iconFocusNode,
-          );
+          )
+        : null;
     final iconConstraint = calendarIcon != null ? const BoxConstraints(maxHeight: BaseWidget.iconMaxHeight) : null;
 
     final clearIcon = !widget.enabled || widget.controller.text.isEmpty
