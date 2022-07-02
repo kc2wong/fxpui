@@ -2,11 +2,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
 
+import 'common.dart';
 import '../model/authentication.dart';
 import '../model/exception.dart';
 import '../util/logger.dart';
 
-class AuthenticationService {
+class AuthenticationService extends BaseHttpService {
 
   Future<List<User>> getLocalUsers() async {
     return [
@@ -23,7 +24,7 @@ class AuthenticationService {
   }
 
   Future<Authentication> login(String userid) async {
-    const url = 'http://demo8048542.mockable.io/v1/authentications';
+    const url = '${BaseHttpService.baseUrl}/v1/authentications';
     final request = json.encode(
       {
         'userid': userid.trim(),

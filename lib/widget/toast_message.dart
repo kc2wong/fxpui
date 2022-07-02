@@ -193,7 +193,7 @@ class _ToastMessageState extends State<_ToastMessage> {
                                       },
                                       child: Icon(
                                         Icons.close,
-                                        color: themeData.textTheme.caption?.color ?? Colors.black54,
+                                        color: widget.textColor,
                                         size: 16,
                                       ),
                                     )

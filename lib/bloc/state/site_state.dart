@@ -57,6 +57,11 @@ class SiteSearchState {
         errorCode = null,
         errorParams = [],
         lastActionTime = currentState.lastActionTime;
+
+  bool dataFetched() {
+    return siteList != null || errorCode != null;
+  }
+
 }
 
 Site? _firstSite(List<Site>? siteList) {
@@ -65,3 +70,4 @@ Site? _firstSite(List<Site>? siteList) {
   }
   return siteList.first;
 }
+

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/account_bloc.dart';
 import '../../localization/language.dart';
 import '../../model/client.dart';
+import '../../theme/app_theme.dart';
 import '../../widget/base_widget.dart';
 import '../../widget/data_grid.dart';
 
@@ -36,13 +37,17 @@ class AccountDetailPage extends StatelessWidget with BaseWidget {
             padding: const EdgeInsets.only(left: padding),
             child: Text(
               i18n.paymentPage.accountDetail,
+              style: TextStyle(
+                color: AppTheme.light.textTheme.bodyText1?.color,
+              ),
             ),
           ),
           IconButton(
             onPressed: () => fxAccountSearchBloc.unSelectFxAccount(),
-            icon: const Icon(
+            icon: Icon(
               Icons.close,
               size: 16,
+              color: AppTheme.light.textTheme.bodyText1?.color,
             ),
             splashRadius: 1.0,
           ),

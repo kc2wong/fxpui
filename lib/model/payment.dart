@@ -129,8 +129,8 @@ class Payment {
         direction = PaymentDirection.values.firstWhere((element) => element.name == json['direction']),
         creditCcy = json['creditCcy'] as String,
         debitCcy = json['debitCcy'] as String,
-        creditAmount = json.containsKey('creditAmount') ? json['creditAmount'] as double : null,
-        debitAmount = json.containsKey('debitAmount') ? json['debitAmount'] as double : null,
+        creditAmount = json.containsKey('creditAmount') ? (json['creditAmount'] as num).toDouble() : null,
+        debitAmount = json.containsKey('debitAmount') ? (json['debitAmount'] as num).toDouble() : null,
         executeDate = DateTime.parse(json['execDate']);
 }
 
@@ -217,7 +217,7 @@ class EnrichmentRequest {
         initiatedBy = json['initiatedBy'] as String,
         ccyPair = json['ccyPair'] as String,
         product = json['product'] as String?,
-        rate = json['rate'] as double?,
+        rate = json.containsKey('rate') ? (json['rate'] as num).toDouble() : null,
         fxRef = json['fxRef'] as String?,
         fxd = json['fxd'] as String?,
         fxt = json['fxt'] as String?,

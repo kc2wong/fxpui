@@ -9,9 +9,7 @@ import '../util/logger.dart';
 
 class SiteSearchService extends BaseHttpService {
   Future<List<Site>> listSite() async {
-
-    const url =
-        '${BaseHttpService.baseUrl}/v1/sites';
+    const url = '${BaseHttpService.baseUrl}/v1/sites';
     final response = await http.get(
         Uri.parse(url),
         headers: {'Content-Type': 'application/json'},

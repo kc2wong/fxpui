@@ -162,7 +162,7 @@ class _InputDropdownState<T> extends State<InputDropdown<T>> {
             onBeforeChange: widget.changeConfirmation == null ? null : (prevItems, nextItems) => widget.changeConfirmation!(nextItems),
             onChanged: (items) {
               final text = widget.choices.entries.where((element) => items.contains(element.value)).map((e) => e.key).join(', ');
-              logger.d('Selected items = $text}');
+              logger.d('Selected items = $text');
               widget.controller.text = text;
               if (widget.onChanged != null) {
                 widget.onChanged!(items);
@@ -199,7 +199,7 @@ class _InputDropdownState<T> extends State<InputDropdown<T>> {
                 : (prevItem, nextItem) => widget.changeConfirmation!(nextItem != null ? [nextItem] : []),
             onChanged: (item) {
               final text = item == null ? '' : widget.choices.entries.firstWhere((element) => element.value == item).key;
-              logger.d('Selected items = $text}');
+              logger.d('Selected items = $text');
               widget.controller.text = text;
               if (widget.onChanged != null) {
                 widget.onChanged!(item == null ? [] : [item]);

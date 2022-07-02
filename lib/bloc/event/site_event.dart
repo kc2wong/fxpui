@@ -2,6 +2,9 @@ abstract class BaseSiteEvent {
 }
 
 class SiteSearchEvent extends BaseSiteEvent {
+  bool reset;
+
+  SiteSearchEvent(this.reset);
 }
 
 class SiteSelectEvent extends BaseSiteEvent {

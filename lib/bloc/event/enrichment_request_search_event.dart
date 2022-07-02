@@ -50,4 +50,7 @@ class EnrichmentRequestRefreshEvent extends BaseEnrichmentRequestSearchEvent {
 }
 
 class EnrichmentRequestResetEvent extends BaseEnrichmentRequestSearchEvent {
+  final String? siteCode;
+
+  EnrichmentRequestResetEvent(this.siteCode);
 }

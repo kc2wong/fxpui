@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/authentication_bloc.dart';
 import '../bloc/event/authentication_event.dart';
 import '../bloc/event/system_event.dart';
+import '../bloc/state/authentication_state.dart';
 import '../bloc/state/system_state.dart';
 import '../bloc/system_bloc.dart';
 import '../localization/language.dart';
@@ -55,7 +56,8 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
     final horizontalPadding = MediaQuery.of(context).size.width / 8;
     final verticalPadding = MediaQuery.of(context).size.height / 4;
 
-    return BlocBuilder<SystemBloc, SystemState>(builder: (_, state) {
+    final localUsers = context.read<SystemBloc>().state.localUsers;
+    return BlocBuilder<AuthenticationBloc, AuthenticationState>(builder: (_, state) {
       return DefaultTabController(
         length: _numOfTabs,
         child: Scaffold(
@@ -82,60 +84,62 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
           body: TabBarView(
             controller: _tabController,
             children: [
-              Padding(
-                padding: EdgeInsets.only(
-                  left: horizontalPadding,
-                  right: horizontalPadding,
-                  top: verticalPadding,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      width: 500,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+              state.authentication != null
+                  ? const SizedBox.shrink()
+                  : Padding(
+                      padding: EdgeInsets.only(
+                        left: horizontalPadding,
+                        right: horizontalPadding,
+                        top: verticalPadding,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            i18n.loginPage.greeting,
-                            style: const TextStyle(
-                              fontSize: 45,
-                              fontWeight: FontWeight.bold,
+                          SizedBox(
+                            width: 500,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  i18n.loginPage.greeting,
+                                  style: const TextStyle(
+                                    fontSize: 45,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                Text(
+                                  i18n.loginPage.signInHint,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const SizedBox(
+                                  height: 120,
+                                ),
+                              ],
                             ),
                           ),
-                          const SizedBox(
-                            height: 30,
-                          ),
-                          Text(
-                            i18n.loginPage.signInHint,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
+                          SizedBox(
+                            width: 320,
+                            child: _formLogin(
+                              () => loginAction(
+                                  context,
+                                  isNullOrEmpty(_selectedUseridController.text)
+                                      ? _enteredUseridController.text
+                                      : _selectedUseridController.text),
+                              i18n,
+                              localUsers,
                             ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const SizedBox(
-                            height: 120,
                           ),
                         ],
                       ),
                     ),
-                    SizedBox(
-                      width: 320,
-                      child: _formLogin(
-                        () => loginAction(
-                            context,
-                            isNullOrEmpty(_selectedUseridController.text)
-                                ? _enteredUseridController.text
-                                : _selectedUseridController.text),
-                        i18n,
-                        state.localUsers,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
               const Center(
                 child: Text(
                   'About Page',

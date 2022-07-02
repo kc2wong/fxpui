@@ -99,6 +99,5 @@ class EnrichmentRequestSearchState {
         offSet = currentState.offSet,
         pageSize = currentState.pageSize;
 
-  // bool withData() => lastActionTime > 0;
-  bool withData() => searchResult != null;
+  bool dataFetched() => searchResult != null || errorCode != null;
 }

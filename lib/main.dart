@@ -119,8 +119,8 @@ class _FxpAppState extends State<FxpApp> {
             return [
               MaterialPageRoute(
                 builder: (context) {
-                  // return widget._authenticated ? const HomePage() : const LoginPage();
-                  return widget._authenticated ? const HomePage() : const HomePage();
+                  return widget._authenticated ? const HomePage() : const LoginPage();
+                  // return widget._authenticated ? const HomePage() : const HomePage();
                 },
               ),
             ];
@@ -152,6 +152,9 @@ class _FxpAppState extends State<FxpApp> {
               } else {
                 // After logout
                 getNavigationService().navigateTo(RouteName.routeNameLogin);
+                BlocProvider.of<EnrichmentRequestSearchBloc>(context).resetState();
+                BlocProvider.of<CurrencySearchBloc>(context).resetState();
+                BlocProvider.of<SiteSearchBloc>(context).resetState();
               }
             }
           },

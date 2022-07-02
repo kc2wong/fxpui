@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/event/enrichment_request_search_event.dart';
@@ -23,9 +25,9 @@ class EnrichmentRequestSearchBloc extends Bloc<BaseEnrichmentRequestSearchEvent,
     on<EnrichmentRequestResetEvent>(_handlePaymentResetEvent);
   }
 
-  void resetState() {
+  void resetState({String? siteCode}) {
     add(
-      EnrichmentRequestResetEvent(),
+      EnrichmentRequestResetEvent(siteCode),
     );
   }
 
@@ -126,8 +128,10 @@ class EnrichmentRequestSearchBloc extends Bloc<BaseEnrichmentRequestSearchEvent,
           refreshSuccessMessage: event.refreshSuccessMessage,
         ));
       } on ApplicationException catch (ae) {
+        logger.w('applicationException = $ae');
         emit(EnrichmentRequestSearchState.fromFailure(state, ae.errorCode, ae.errorParams));
       } catch (error) {
+        logger.w('error = $error');
         emit(EnrichmentRequestSearchState.fromFailure(state, genericErrorCode, []));
       }
     }
@@ -207,10 +211,16 @@ class EnrichmentRequestSearchBloc extends Bloc<BaseEnrichmentRequestSearchEvent,
   Future<void> _handlePaymentResetEvent(EnrichmentRequestResetEvent event, Emitter emit) async {
     logger.i('event = $event');
 
-    emit(EnrichmentRequestSearchState(
-      executionDateFrom: DateUtils.dateOnly(_currentDateTime),
-      executionDateTo: DateUtils.dateOnly(_currentDateTime),
-    ));
+    if (event.siteCode == null) {
+      emit(EnrichmentRequestSearchState());
+    }
+    else {
+      emit(EnrichmentRequestSearchState(
+        siteCode: event.siteCode,
+        executionDateFrom: DateUtils.dateOnly(_currentDateTime),
+        executionDateTo: DateUtils.dateOnly(_currentDateTime),
+      ));
+    }
   }
 }
 
