@@ -104,7 +104,7 @@ class EnrichmentRequestSearchBloc extends Bloc<BaseEnrichmentRequestSearchEvent,
           debitAmountTo: state.debitAmountTo,
         );
 
-        await Future.delayed(const Duration(seconds: 1));
+        // await Future.delayed(const Duration(seconds: 1));
 
         final now = DateTime.now();
         emit(EnrichmentRequestSearchState(
@@ -180,7 +180,7 @@ class EnrichmentRequestSearchBloc extends Bloc<BaseEnrichmentRequestSearchEvent,
         debitAmountTo: event.debitAmountTo,
       );
 
-      await Future.delayed(const Duration(seconds: 1));
+      // await Future.delayed(const Duration(seconds: 1));
 
       final now = DateTime.now();
       emit(EnrichmentRequestSearchState(

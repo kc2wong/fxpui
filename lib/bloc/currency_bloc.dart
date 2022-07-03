@@ -37,7 +37,7 @@ class CurrencySearchBloc extends Bloc<CurrencySearchEvent, CurrencySearchState> 
         final searchResult = await _currencyService.listCurrency();
         searchResult.sort((c1, c2) => c1.isoCcy.compareTo(c2.isoCcy));
 
-        await Future.delayed(const Duration(seconds: 1));
+        // await Future.delayed(const Duration(seconds: 1));
 
         emit(CurrencySearchState.finishSearch(
           searchResult,
