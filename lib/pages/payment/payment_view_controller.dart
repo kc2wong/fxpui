@@ -40,7 +40,7 @@ class _PaymentViewControllerState extends State<PaymentViewController> with Sing
   @override
   void initState() {
     super.initState();
-    _currentViewType = _PaymentViewType.listPayment;
+    _currentViewType = _PaymentViewType.notApplicable;
 
     final _breadcrumbItems = <BreadcrumbItem<_PaymentViewType>>[
       BreadcrumbItem(() {
@@ -122,7 +122,7 @@ class _PaymentViewControllerState extends State<PaymentViewController> with Sing
         );
         break;
       default:
-        mainPane = const PaymentListingPage();
+        mainPane = const SizedBox.shrink();
         break;
     }
 

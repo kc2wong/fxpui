@@ -60,7 +60,7 @@ class SiteSearchBloc extends Bloc<BaseSiteEvent, SiteSearchState> {
         final searchResult = await _siteService.listSite();
         searchResult.sort((c1, c2) => c1.siteCode.compareTo(c2.siteCode));
 
-        await Future.delayed(const Duration(seconds: 1));
+        // await Future.delayed(const Duration(seconds: 1));
 
         emit(SiteSearchState.finishSearch(
           state,
