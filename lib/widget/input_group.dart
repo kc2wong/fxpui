@@ -19,6 +19,7 @@ class InputGroup extends StatelessWidget with BaseWidget, LabelledWidget {
   final Color? backgroundColor;
   final bool reserveHelperTextSpace;
   final String? tooltip;
+  final TooltipPosition tooltipPosition;
   final List<Widget> widgets;
 
   const InputGroup({
@@ -31,6 +32,7 @@ class InputGroup extends StatelessWidget with BaseWidget, LabelledWidget {
     this.backgroundColor,
     this.reserveHelperTextSpace = false,
     this.tooltip,
+    this.tooltipPosition = TooltipPosition.below,
     this.errorText,
   }) : super(key: key);
 
@@ -76,7 +78,7 @@ class InputGroup extends StatelessWidget with BaseWidget, LabelledWidget {
             color: backgroundColor ?? themeData.backgroundColor,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: tooltip != null ? addTooltip(themeData, tooltip!, labelWidget) : labelWidget,
+              child: tooltip != null ? addTooltip(themeData, tooltip!, labelWidget, below: tooltipPosition == TooltipPosition.below) : labelWidget,
             ),
           ),
         ),

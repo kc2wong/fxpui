@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+enum TooltipPosition {
+  above,
+  below,
+}
+
 abstract class BaseWidget {
   static const fontFamily = 'SegoeUI';
   static const fontSize = 14.0;
@@ -28,11 +33,18 @@ abstract class BaseWidget {
     );
   }
 
-  Widget addTooltip(ThemeData themeData, String tooltip, Widget widget) {
+  Widget addTooltip(
+    ThemeData themeData,
+    String tooltip,
+    Widget widget, {
+    bool below = true,
+  }) {
     return Tooltip(
       message: tooltip,
       child: widget,
       textStyle: defaultTextStyle(),
+      verticalOffset: below ? null : 10,
+      preferBelow: below,
       decoration: BoxDecoration(
         color: themeData.secondaryHeaderColor,
       ),

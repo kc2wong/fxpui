@@ -311,6 +311,7 @@ class _PaymentEditFormState extends State<_PaymentEditForm> with BaseWidget, Sin
                   labelSuffix: matchedExtAccountRef.isEmpty ? null : '[${matchedExtAccountRef[0].refType}]',
                   helpTextColor: themeData.errorColor,
                   tooltip: 'Enter 00001047380 to simulate valid account ref',
+                  tooltipPosition: TooltipPosition.above,
                   reserveHelperTextSpace: true,
                   helperText: i18n.paymentPage.accountAlert(fxAccount1?.alertMessage),
                   onChanged: (newAccountOneRef) => enrichmentRequestBloc.draftEnrichmentRequest(accountRef1: newAccountOneRef ?? ''),
@@ -467,6 +468,7 @@ class _PaymentEditFormState extends State<_PaymentEditForm> with BaseWidget, Sin
               label: i18n.paymentPage.bankSell,
               mandatory: true,
               tooltip: 'Enter amount greater than 100,000 to simulate client side validation failure',
+              tooltipPosition: TooltipPosition.above,
               backgroundColor: themeData.cardColor,
               widgets: [
                 Row(
@@ -525,6 +527,7 @@ class _PaymentEditFormState extends State<_PaymentEditForm> with BaseWidget, Sin
               label: i18n.paymentPage.bankBuy,
               mandatory: true,
               tooltip: 'Enter amount greater than 100,000 to simulate client side validation failure',
+              tooltipPosition: TooltipPosition.above,
               backgroundColor: themeData.cardColor,
               widgets: [
                 Row(
