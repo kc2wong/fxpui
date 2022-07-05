@@ -76,11 +76,10 @@ class EnrichmentRequestBloc extends Bloc<BaseEnrichmentRequestEvent, EnrichmentR
     );
   }
 
-  void editEnrichmentRequest(
-    String id,
-    Payment payment, {
-    String? fxRef,
-  }) {
+  void editEnrichmentRequest() {
+    final id = state.enrichmentRequest!.id;
+    final payment = state.enrichmentRequest!.payment;
+    final fxRef = state.enrichmentRequest!.fxRef;
     add(
       EditEnrichmentRequestEvent(id, payment, fxRef),
     );
@@ -134,7 +133,9 @@ class EnrichmentRequestBloc extends Bloc<BaseEnrichmentRequestEvent, EnrichmentR
     );
   }
 
-  void cancelEnrichmentRequest(String id, Payment payment) {
+  void cancelEnrichmentRequest() {
+    final id = state.enrichmentRequest!.id;
+    final payment = state.enrichmentRequest!.payment;
     add(
       CancelEnrichmentRequestEvent(id, payment),
     );

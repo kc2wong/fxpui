@@ -99,7 +99,6 @@ class _PaymentDetailFormState extends State<_PaymentDetailForm> with BaseWidget,
     final systemBloc = BlocProvider.of<SystemBloc>(context);
     final enrichmentRequestBloc = BlocProvider.of<EnrichmentRequestBloc>(context);
     final enrichmentRequest = enrichmentRequestBloc.state.enrichmentRequest!;
-    final payment = enrichmentRequest.payment;
 
     final currencySearchBloc = BlocProvider.of<CurrencySearchBloc>(context);
     final precisionMap = currencySearchBloc.state.precisionMap;
@@ -185,9 +184,8 @@ class _PaymentDetailFormState extends State<_PaymentDetailForm> with BaseWidget,
 
                               enrichmentRequestBloc.submitEnrichmentRequest(enrichmentRequest.id, fxd, productCode, valueDate);
                             },
-                            () => enrichmentRequestBloc.editEnrichmentRequest(enrichmentRequest.id, payment,
-                                fxRef: enrichmentRequest.fxRef),
-                            () => enrichmentRequestBloc.cancelEnrichmentRequest(enrichmentRequest.id, payment),
+                            () => enrichmentRequestBloc.editEnrichmentRequest(),
+                            () => enrichmentRequestBloc.cancelEnrichmentRequest(),
                           )
                         ],
                       ),

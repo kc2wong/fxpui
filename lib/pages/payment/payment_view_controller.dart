@@ -201,7 +201,7 @@ class _PaymentViewControllerState extends State<PaymentViewController> with Sing
                             }
                             else {
                               if (state.transactionStatus == TransactionStatus.edit) {
-                                paymentNavigator.pushEditPayment(() => i18n.paymentPage.newPayment);
+                                paymentNavigator.pushEditPayment(() => i18n.paymentPage.newPayment, enrichmentRequestBloc);
                               } else {
                                 paymentNavigator.popToListPayment();
                               }
@@ -289,14 +289,6 @@ class _PaymentViewControllerState extends State<PaymentViewController> with Sing
               DropDownButtonAction(() => systemBloc.showToast('Export Current Page Pressed', ToastType.info), 'Current Page'),
               DropDownButtonAction(() => systemBloc.showToast('Export All Pages Pressed', ToastType.info), 'All Pages'),
             ],
-            // choices: {
-            //   'Current Page': () {
-            //     systemBloc.showToast('Export Current Page Pressed', ToastType.info);
-            //   },
-            //   'All Pages': () {
-            //     systemBloc.showToast('Export All Pages Pressed', ToastType.info);
-            //   },
-            // },
           ),
         ),
       ],
@@ -346,13 +338,13 @@ class _PaymentNavigator {
     }
   }
 
-  void pushEditPayment(CaptionProvider captionProvider) {
+  void pushEditPayment(CaptionProvider captionProvider, EnrichmentRequestBloc enrichmentRequestBloc) {
     if (breadcrumbItems.isEmpty || breadcrumbItems.last.metaData != _PaymentViewType.editPayment) {
       breadcrumbItems.add(
         BreadcrumbItem(
           captionProvider,
           _PaymentViewType.editPayment,
-          onItemTap: (item) => popToEditPayment(captionProvider),
+          onItemTap: (_) => enrichmentRequestBloc.editEnrichmentRequest(),
         ),
       );
       target = _PaymentViewType.editPayment;
@@ -413,7 +405,6 @@ class _PaymentNavigator {
     final idx = breadcrumbItems.indexWhere((element) => element.metaData == _PaymentViewType.editPayment);
     if (idx >= 0 && idx != breadcrumbItems.length - 1) {
       breadcrumbItems.removeRange(idx + 1, breadcrumbItems.length);
-      // breadcrumbItems.add(BreadcrumbItem(captionProvider, _PaymentViewType.editPayment));
       target = _PaymentViewType.editPayment;
       controller.forward();
     }

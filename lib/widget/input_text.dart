@@ -12,6 +12,7 @@ class InputText extends StatefulWidget with BaseWidget, LabelledWidget {
   final String? errorText;
   final String? prefixText;
   final String? tooltip;
+  final TooltipPosition tooltipPosition;
   final bool reserveHelperTextSpace;
   final int? maxLines;
   final TextEditingController controller;
@@ -27,6 +28,7 @@ class InputText extends StatefulWidget with BaseWidget, LabelledWidget {
     this.mandatory = false,
     this.prefixText,
     this.tooltip,
+    this.tooltipPosition = TooltipPosition.below,
     this.helperText,
     this.reserveHelperTextSpace = false,
     this.helpTextColor,
@@ -184,6 +186,7 @@ class _InputTextState extends State<InputText> {
                     themeData,
                     widget.tooltip!,
                     label,
+                    below: widget.tooltipPosition == TooltipPosition.below,
                   )
                 : label,
           ),
