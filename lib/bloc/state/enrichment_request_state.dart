@@ -171,6 +171,7 @@ class EnrichmentRequestState {
         autoQuoteInfo = null,
         errorCode = null,
         errorParams = [],
+        withError = false,
         lastActionTime = DateTime.now().microsecondsSinceEpoch;
 
   EnrichmentRequestState.startCancel(this.enrichmentRequest)
@@ -194,6 +195,7 @@ class EnrichmentRequestState {
         autoQuoteInfo = null,
         errorCode = null,
         errorParams = [],
+        withError = false,
         lastActionTime = DateTime.now().microsecondsSinceEpoch;
 
   EnrichmentRequestState.startSubmit(this.enrichmentRequest, this.dealToMatch, this.autoQuoteInfo)

@@ -137,8 +137,6 @@ class _ToastMessageState extends State<_ToastMessage> {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Theme.of(context);
-
     return AnimatedContainer(
       height: visible ? height : 0,
       duration: const Duration(milliseconds: 250),

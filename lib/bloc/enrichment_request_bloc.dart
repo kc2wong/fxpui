@@ -91,9 +91,7 @@ class EnrichmentRequestBloc extends Bloc<BaseEnrichmentRequestEvent, EnrichmentR
     String? accountRef2,
     PaymentDirection? direction,
     String? creditCcy,
-    // double? creditAmount,
     String? debitCcy,
-    // double? debitAmount,
     String? fxRef,
   }) {
     add(

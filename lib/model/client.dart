@@ -44,8 +44,7 @@ class FxAccount {
     }
     else {
       final baseList = (json['externalAccounts'] as List<dynamic>).map((e) => ExternalAccountRef.fromJson(e)).toList(growable: false);
-      final matchedExtAccountRef = baseList.firstWhere((element) => element.ref == extAccountRef, orElse: () => fallbackExtRef);
-      externalAccount = baseList.contains(matchedExtAccountRef) ? baseList : [...baseList, fallbackExtRef];
+      externalAccount = baseList;
     }
   }
 }

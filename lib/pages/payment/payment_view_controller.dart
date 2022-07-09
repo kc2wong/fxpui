@@ -201,7 +201,7 @@ class _PaymentViewControllerState extends State<PaymentViewController> with Sing
                             }
                             else {
                               if (state.transactionStatus == TransactionStatus.edit) {
-                                paymentNavigator.pushEditPayment(() => i18n.paymentPage.newPayment, enrichmentRequestBloc);
+                                paymentNavigator.pushEditPayment(() => i18n.paymentPage.newPayment, enrichmentRequestBloc, fxAccountSearchBloc);
                               } else {
                                 paymentNavigator.popToListPayment();
                               }
@@ -338,13 +338,20 @@ class _PaymentNavigator {
     }
   }
 
-  void pushEditPayment(CaptionProvider captionProvider, EnrichmentRequestBloc enrichmentRequestBloc) {
+  void pushEditPayment(CaptionProvider captionProvider, EnrichmentRequestBloc enrichmentRequestBloc, FxAccountSearchBloc fxAccountSearchBloc) {
     if (breadcrumbItems.isEmpty || breadcrumbItems.last.metaData != _PaymentViewType.editPayment) {
       breadcrumbItems.add(
         BreadcrumbItem(
           captionProvider,
           _PaymentViewType.editPayment,
-          onItemTap: (_) => enrichmentRequestBloc.editEnrichmentRequest(),
+          onItemTap: (_) {
+            if (breadcrumbItems.last.metaData == _PaymentViewType.viewAccount) {
+              fxAccountSearchBloc.unSelectFxAccount();
+            }
+            else {
+              enrichmentRequestBloc.editEnrichmentRequest();
+            }
+          },
         ),
       );
       target = _PaymentViewType.editPayment;
