@@ -26,6 +26,12 @@ class InputRadio<T> extends StatefulWidget with BaseWidget, LabelledWidget {
     this.choices = {
       for (var e in choices.entries) e.value: e.key,
     };
+    if (initialValue != null) {
+      final initialText = choices[initialValue];
+      if (initialText != null && initialText != controller.text) {
+        controller.text = initialText;
+      }
+    }
   }
 
   @override
@@ -33,11 +39,11 @@ class InputRadio<T> extends StatefulWidget with BaseWidget, LabelledWidget {
 }
 
 class _InputRadioState<T> extends State<InputRadio<T>> {
-  T? selectedValue;
 
   @override
   Widget build(BuildContext context) {
-    logger.d('text = ${widget.controller.text}');
+    final selectedValue = widget.controller.text.isEmpty ? null : widget.choices[widget.controller.text];
+
     final radioButtons = widget.choices.entries
         .map(
           (e) => Expanded(
@@ -51,7 +57,6 @@ class _InputRadioState<T> extends State<InputRadio<T>> {
                   visualDensity: const VisualDensity(
                     horizontal: VisualDensity.minimumDensity,
                   ),
-                  // materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   splashRadius: 16.0,
                   value: e.value,
                   groupValue: selectedValue ?? widget.initialValue,
@@ -108,7 +113,6 @@ class _InputRadioState<T> extends State<InputRadio<T>> {
 
   void _valueChanged(T? value) {
     widget.controller.text = value != null ? widget.choices.entries.where((element) => element.value == value).first.key : '';
-    selectedValue = value;
     setState(() {
       if (widget.onChanged != null) {
         widget.onChanged!(value);

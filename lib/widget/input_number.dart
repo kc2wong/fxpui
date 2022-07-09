@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
+import '../util/number_util.dart';
 import 'base_widget.dart';
 
 class InputNumber extends StatefulWidget with BaseWidget, LabelledWidget {
@@ -42,9 +43,7 @@ class InputNumber extends StatefulWidget with BaseWidget, LabelledWidget {
     this.onChanged,
   }) : super(key: key) {
     if (initialValue != null) {
-      final integerPart = thousandSeparator ? '#,###' : '#';
-      final decimalPart = numberOfDecimal > 0 ? '.' + '0' * numberOfDecimal : '';
-      final initialText = NumberFormat('$integerPart$decimalPart').format(initialValue);
+      final initialText = formatNumber(initialValue, thousandSeparator, numberOfDecimal);
       if (initialText != controller.text) {
         controller.text = initialText;
       }

@@ -16,6 +16,7 @@ import '../../model/payment.dart';
 import '../../model/system.dart';
 import '../../pages/payment/utils.dart';
 import '../../util/logger.dart';
+import '../../util/number_util.dart' as num_util;
 import '../../widget/base_widget.dart';
 import '../../widget/button.dart';
 import '../../widget/input_date.dart';
@@ -80,6 +81,7 @@ class _PaymentEditFormState extends State<_PaymentEditForm> with BaseWidget, Sin
   late TextEditingController _fxRefController;
   late FocusNode _accountLinkFocusNode;
   late bool _initialRender;
+  String? _accountOneRefType;
 
   @override
   void initState() {
@@ -220,7 +222,6 @@ class _PaymentEditFormState extends State<_PaymentEditForm> with BaseWidget, Sin
     );
   }
 
-
   Widget _createPaymentDetailForm(
     EnrichmentRequest? enrichmentRequest,
     Map<String, String> ccyMap,
@@ -245,7 +246,6 @@ class _PaymentEditFormState extends State<_PaymentEditForm> with BaseWidget, Sin
       buildWhen: (prev, current) => prev.withError != current.withError,
       builder: (_, state) {
         final draftPayment = _initialRender ? state.draftPayment : null;
-        _initialRender = false;
         return Column(
           children: [
             createCaptionDivider(
@@ -281,7 +281,25 @@ class _PaymentEditFormState extends State<_PaymentEditForm> with BaseWidget, Sin
             if (state.loading) {
               systemBloc.startLoading();
             } else {
+              final accountList = state.accountList;
+              final fxAccount1 = accountList != null && accountList.isNotEmpty ? accountList[0] : null;
+              final matchedExtAccountRef = (fxAccount1?.externalAccount ?? <ExternalAccountRef>[])
+                  .where((element) => element.ref == (draftPayment?.accountRef1 ?? _accountOneController.text))
+                  .toList(growable: false);
+              _accountOneRefType = matchedExtAccountRef.isEmpty ? null : matchedExtAccountRef[0].refType;
               systemBloc.stopLoading();
+            }
+          },
+        ),
+        BlocListener<EnrichmentRequestBloc, EnrichmentRequestState>(
+          // When draftPayment is updated
+          listenWhen: (previous, current) => previous.transactionStatus == current.transactionStatus && current.lastActionTime > previous.lastActionTime,
+          listener: (_, state) {
+            // mark _initialRender to false
+            if (_initialRender) {
+              _initialRender = false;
+              setState(() {
+              });
             }
           },
         ),
@@ -292,11 +310,14 @@ class _PaymentEditFormState extends State<_PaymentEditForm> with BaseWidget, Sin
           final accountList = state.accountList;
           final fxAccount1 = accountList != null && accountList.isNotEmpty ? accountList[0] : null;
           final fxAccount2 = numberOfInputAccount == 2 ? (accountList != null && accountList.length > 1 ? accountList[1] : null) : null;
-          logger.d('fxAccount1 = $fxAccount1, fxAccount2 = $fxAccount1');
+          // logger.d('fxAccount1 = $fxAccount1, fxAccount2 = $fxAccount1');
 
-          final matchedExtAccountRef = (fxAccount1?.externalAccount ?? <ExternalAccountRef>[])
-              .where((element) => element.ref == _accountOneController.text)
-              .toList(growable: false);
+          if (_initialRender) {
+            final matchedExtAccountRef = (fxAccount1?.externalAccount ?? <ExternalAccountRef>[])
+                .where((element) => element.ref == (draftPayment?.accountRef1 ?? _accountOneController.text))
+                .toList(growable: false);
+            _accountOneRefType = matchedExtAccountRef.isEmpty ? null : matchedExtAccountRef[0].refType;
+          }
 
           final accountOneRow = Row(
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -308,7 +329,7 @@ class _PaymentEditFormState extends State<_PaymentEditForm> with BaseWidget, Sin
                   initialValue: draftPayment?.accountRef1,
                   controller: _accountOneController,
                   label: i18n.paymentPage.account1,
-                  labelSuffix: matchedExtAccountRef.isEmpty ? null : '[${matchedExtAccountRef[0].refType}]',
+                  labelSuffix: _accountOneRefType == null ? null : '[$_accountOneRefType]',
                   helpTextColor: themeData.errorColor,
                   tooltip: 'Enter 00001047380 to simulate valid account ref',
                   tooltipPosition: TooltipPosition.above,
@@ -366,7 +387,6 @@ class _PaymentEditFormState extends State<_PaymentEditForm> with BaseWidget, Sin
                   initialValue: draftPayment?.accountRef2,
                   controller: _accountTwoController,
                   label: i18n.paymentPage.account2,
-                  labelSuffix: matchedExtAccountRef.isEmpty && matchedExtAccountRef.length > 1 ? null : '[${matchedExtAccountRef[1].refType}]',
                   helpTextColor: themeData.errorColor,
                   reserveHelperTextSpace: true,
                   helperText: i18n.paymentPage.accountAlert(fxAccount2?.alertMessage),
@@ -484,9 +504,13 @@ class _PaymentEditFormState extends State<_PaymentEditForm> with BaseWidget, Sin
                           showSearchBox: true,
                           choices: ccyMap,
                           hint: i18n.ccy,
-                          onChanged: (newCreditCcy) => setState(() {
+                          onChanged: (newCreditCcy) {
+                            if (_creditAmountController.text.isNotEmpty) {
+                              final creditAmount = double.parse(_creditAmountController.text.replaceAll(',', ''));
+                              _creditAmountController.text = num_util.formatNumber(creditAmount, true, precisionMap[newCreditCcy[0]] ?? 0);
+                            }
                             enrichmentRequestBloc.draftEnrichmentRequest(creditCcy: newCreditCcy[0]);
-                          }),
+                          },
                         ),
                       ),
                     ),
@@ -500,7 +524,7 @@ class _PaymentEditFormState extends State<_PaymentEditForm> with BaseWidget, Sin
                           initialValue: draftPayment?.creditAmount,
                           controller: _creditAmountController,
                           hint: i18n.amount,
-                          numberOfDecimal: precisionMap[creditCcy] ?? 0,
+                          numberOfDecimal: precisionMap[creditCcy ?? _creditCcyController.text] ?? 0,
                           allowNegative: false,
                           onChanged: (newCreditAmount) {
                             _debitAmountController.clear();
@@ -543,9 +567,13 @@ class _PaymentEditFormState extends State<_PaymentEditForm> with BaseWidget, Sin
                           showSearchBox: true,
                           choices: ccyMap,
                           hint: i18n.ccy,
-                          onChanged: (newDebitCcy) => setState(() {
+                          onChanged: (newDebitCcy) {
+                            if (_debitAmountController.text.isNotEmpty) {
+                              final debitAmount = double.parse(_debitAmountController.text.replaceAll(',', ''));
+                              _debitAmountController.text = num_util.formatNumber(debitAmount, true, precisionMap[newDebitCcy[0]] ?? 0);
+                            }
                             enrichmentRequestBloc.draftEnrichmentRequest(debitCcy: newDebitCcy[0]);
-                          }),
+                          },
                         ),
                       ),
                     ),
@@ -559,7 +587,7 @@ class _PaymentEditFormState extends State<_PaymentEditForm> with BaseWidget, Sin
                           initialValue: draftPayment?.debitAmount,
                           controller: _debitAmountController,
                           hint: i18n.amount,
-                          numberOfDecimal: precisionMap[debitCcy] ?? 0,
+                          numberOfDecimal: precisionMap[debitCcy ?? _debitCcyController.text] ?? 0,
                           allowNegative: false,
                           onChanged: (newDebitAmount) {
                             _creditAmountController.clear();
